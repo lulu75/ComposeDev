@@ -2,6 +2,7 @@ package com.lulu.composedev.ui.page.base
 
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +12,7 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,10 +20,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,7 +54,14 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import com.lulu.composedev.R
+import com.lulu.composedev.ui.bean.IMAGE_PREVIEW_LOCAL
+import com.lulu.composedev.ui.bean.IMAGE_PREVIEW_NETWORK
 import com.lulu.composedev.ui.bean.PreviewItem
+import github.leavesczy.matisse.CoilImageEngine
+import github.leavesczy.matisse.DefaultMediaFilter
+import github.leavesczy.matisse.Matisse
+import github.leavesczy.matisse.MatisseContract
+import github.leavesczy.matisse.MediaType
 
 /**
  * 作者: shilu
@@ -67,13 +78,12 @@ fun ZoomableImagePager(
     HorizontalPager(
         state = pagerState, modifier = Modifier.fillMaxSize()
     ) { page ->
-//        ZoomableImage(items[page].imageUrl)
-        ZoomableImage(items[page].imageUrl)
+        ZoomableImage(items[page])
     }
 }
 
 @Composable
-fun ZoomableImage(url: String) {
+fun ZoomableImage(data: PreviewItem) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
     val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
@@ -200,7 +210,11 @@ fun ZoomableImage(url: String) {
                 }, contentAlignment = Alignment.Center
         ) {
             SubcomposeAsyncImage(
-                model = url,
+                model =  when (data.type) {
+                    IMAGE_PREVIEW_LOCAL -> data.uri
+                    IMAGE_PREVIEW_NETWORK -> data.imageUrl
+                    else -> {}
+                },
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
@@ -264,25 +278,61 @@ fun ZoomableImage(url: String) {
 )
 @Composable
 fun ZoomableImagePreview() {
-
-    val mockData = listOf<PreviewItem>(
-        PreviewItem(
-            Uri.EMPTY,
-            "https://images.pexels.com/photos/13743196/pexels-photo-13743196.jpeg"
+    val mockData = remember {
+        mutableStateListOf(
+            PreviewItem(
+                IMAGE_PREVIEW_NETWORK,
+                Uri.EMPTY,
+                "https://images.pexels.com/photos/13743196/pexels-photo-13743196.jpeg"
+            ),
+            PreviewItem(
+                IMAGE_PREVIEW_NETWORK,
+                Uri.EMPTY,
+                "https://images.pexels.com/photos/32435046/pexels-photo-32435046.jpeg"
+            ),
+            PreviewItem(
+                IMAGE_PREVIEW_NETWORK,
+                Uri.EMPTY,
+                "https://images.pexels.com/photos/27968071/pexels-photo-27968071.jpeg"
+            ),
+            PreviewItem(
+                IMAGE_PREVIEW_NETWORK,
+                Uri.EMPTY,
+                "https://images.pexels.com/photos/7007275/pexels-photo-7007275.jpeg"
+            )
+        )
+    }
+    val mediaPickerLauncher =
+        rememberLauncherForActivityResult(contract = MatisseContract()) { selectUriList ->
+            selectUriList?.forEach { item ->
+                mockData.add( PreviewItem(
+                    IMAGE_PREVIEW_LOCAL,
+                    item.uri,
+                    ""
+                ))
+            }
+        }
+    val matisse = Matisse(
+        gridColumns = 4,
+        maxSelectable = 5,
+        fastSelect = false,
+        mediaType = MediaType.ImageOnly,
+        mediaFilter = DefaultMediaFilter(
+            ignoredMimeType = emptySet(),
+            ignoredResourceUri = emptySet(),
+            selectedResourceUri = emptySet()
         ),
-        PreviewItem(
-            Uri.EMPTY,
-            "https://images.pexels.com/photos/32435046/pexels-photo-32435046.jpeg"
-        ),
-        PreviewItem(
-            Uri.EMPTY,
-            "https://images.pexels.com/photos/27968071/pexels-photo-27968071.jpeg"
-        ),
-        PreviewItem(
-            Uri.EMPTY,
-            "https://images.pexels.com/photos/7007275/pexels-photo-7007275.jpeg"
-        ),
+        imageEngine = CoilImageEngine(),
+        singleMediaType = false,
     )
-    ZoomableImagePager(mockData, 2)
+
+    Column {
+        Button(onClick = {
+            mediaPickerLauncher.launch(matisse)
+        }) {
+            Text("选择图片")
+        }
+            ZoomableImagePager(mockData, 2)
+    }
 }
 
