@@ -36,6 +36,9 @@ fun AppNavGraph(
             LandscapeScreen()
         }
 
+        composable  (Route.LAZYLIST){
+
+        }
 
     }
 }

@@ -7,5 +7,6 @@ object Route {
     const val HOME = "home"
     const val LANDSCAPE = "landscape"
     const val IMGPreview = "imgpPreview"
+    const val LAZYLIST = "LazyList"
 
 }

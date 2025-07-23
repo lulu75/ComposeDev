@@ -92,6 +92,12 @@ fun HomePage(navController: NavHostController,onNavigateToLandscape: () -> Unit)
                 Text("图片缩放查看+多图滑动组件")
             }
 
+            Button(onClick = {
+                navController.navigate(Route.IMGPreview)
+            }) {
+                Text("列表+分页")
+            }
+
         }
     }
 }

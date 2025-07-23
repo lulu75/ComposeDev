@@ -13,9 +13,11 @@ composeBom = "2024.09.00"
 matisse = "2.2.0"
 navigation3 = "1.0.0-alpha01"
 navigationCompose = "2.9.0"
+pagingCompose = "3.3.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
 coil-video = { module = "io.coil-kt.coil3:coil-video", version.ref = "coilCompose" }

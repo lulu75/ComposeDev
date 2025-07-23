@@ -62,6 +62,8 @@ dependencies {
 
     //------ 页面组件相关 ----------
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.paging.compose)
+
 
     // 图片选择器
     implementation(libs.matisse)
@@ -69,5 +71,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.video)
     implementation(libs.coil.network.okhttp)
+
+
 
 }
