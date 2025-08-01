@@ -73,5 +73,8 @@ dependencies {
     implementation(libs.coil.network.okhttp)
 
 
+    //------  三方库 ----------
+    implementation ("io.github.ehsannarmani:compose-charts:0.1.7")
+
 
 }
