@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -318,11 +319,10 @@ fun LazyListScope.LazyListContent() {
 
 @Composable
 fun RowTest() {
-    Row {
+    FlowRow (modifier = Modifier.fillMaxWidth()){
         Column(
             modifier = Modifier
-
-                .weight(1f)
+                .fillMaxWidth(0.33f)
                 .background(Color.Cyan)
         ) {
             Column {
@@ -332,10 +332,36 @@ fun RowTest() {
             }
 
         }
-        Column(modifier = Modifier
-            .background(Color.DarkGray)) {
-            Text("发送")
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.33f)
+                .background(Color.Green)
+        ) {
+            Column {
+                Button(onClick = {}) {
+                    Text("1111")
+                }
+            }
+
         }
+
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth(0.33f)
+//                .background(Color.Yellow)
+//        ) {
+//            Column {
+//                Button(onClick = {}) {
+//                    Text("1111")
+//                }
+//            }
+//
+//        }
+//        Column(modifier = Modifier
+//            .background(Color.DarkGray)) {
+//            Text("发送")
+//        }
     }
 }
 
